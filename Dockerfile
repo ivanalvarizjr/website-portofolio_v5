@@ -1,72 +1,72 @@
 # Multi-stage build untuk Railway
 FROM node:18-alpine AS node_build
 
-# Set working directory untuk Node build
 WORKDIR /app
-
-# Copy package files
 COPY package*.json ./
-
-# Install ALL dependencies (including devDependencies for build)
 RUN npm ci --include=dev
-
-# Copy source code
 COPY . .
-
-# Build assets dengan Vite
 RUN npm run build
 
-# PHP stage
-FROM php:8.2-fpm-alpine
+# Production stage dengan Apache
+FROM php:8.2-apache
 
-# Install system dependencies
-RUN apk add --no-cache \
-    build-base \
+# Install dependencies
+RUN apt-get update && apt-get install -y \
     libpng-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    oniguruma-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
     zip \
-    libzip-dev \
-    curl \
-    nginx
-
-# Install PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql mbstring zip exif pcntl gd
+    unzip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_mysql gd zip
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
-WORKDIR /app
+# Enable Apache modules
+RUN a2enmod rewrite headers
 
-# Copy ALL application files (including artisan)
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy application
 COPY . .
 
-# Install PHP dependencies (artisan now available)
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
-# Run Laravel post-install scripts manually (after everything is ready)
-RUN composer run-script post-autoload-dump
-
-# Copy built assets from node_build stage
+# Copy built assets
 COPY --from=node_build /app/public/build ./public/build
 
-# Set proper permissions
-RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache \
-    && chmod -R 775 /app/storage /app/bootstrap/cache
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Create cache directory if not exists
-RUN mkdir -p /app/bootstrap/cache
+# Generate app key
+RUN php artisan key:generate --force
 
-# Cache Laravel config untuk production
-RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
+# Cache configs
+RUN php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache
 
-# Expose port untuk Railway
-EXPOSE 8000
+# Apache configuration
+COPY <<EOF /etc/apache2/sites-available/000-default.conf
+<VirtualHost *:80>
+    DocumentRoot /var/www/html/public
+    
+    <Directory /var/www/html/public>
+        AllowOverride All
+        Require all granted
+    </Directory>
+    
+    ErrorLog \${APACHE_LOG_DIR}/error.log
+    CustomLog \${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOF
 
-# Start command untuk Railway
-CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
+# Expose port
+EXPOSE 80
+
+# Start Apache
+CMD ["apache2-foreground"]
