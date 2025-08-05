@@ -2,24 +2,34 @@ version: '3.8'
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: app
-    restart: unless-stopped
+    image: php:8.2-fpm-alpine
+    container_name: laravel-php-fpm
+    working_dir: /var/www/html
     volumes:
-      - .:/var/www
-    expose:
-      - 9000
+      - ./laravel-project:/var/www/html
+    networks:
+      - laravel-network
+    environment:
+      - PHP_INI_SCAN_DIR=/usr/local/etc/php/conf.d:/usr/local/etc/php/custom.d
+    command: >
+      sh -c "
+        docker-php-ext-install pdo pdo_mysql &&
+        php-fpm
+      "
 
-  webserver:
+  nginx:
     image: nginx:alpine
-    container_name: webserver
-    restart: unless-stopped
+    container_name: laravel-nginx
     ports:
-      - "8080:80"
+      - "80:80"
     volumes:
-      - .:/var/www
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./laravel-project:/var/www/html
+      - ./default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - app
+    networks:
+      - laravel-network
+
+networks:
+  laravel-network:
+    driver: bridge
