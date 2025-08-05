@@ -41,14 +41,14 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /app
 
-# Copy composer files first (for better caching)
-COPY composer.json composer.lock ./
-
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
-
-# Copy application code
+# Copy ALL application files (including artisan)
 COPY . .
+
+# Install PHP dependencies (artisan now available)
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts
+
+# Run Laravel post-install scripts manually (after everything is ready)
+RUN composer run-script post-autoload-dump
 
 # Copy built assets from node_build stage
 COPY --from=node_build /app/public/build ./public/build
@@ -56,6 +56,9 @@ COPY --from=node_build /app/public/build ./public/build
 # Set proper permissions
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache \
     && chmod -R 775 /app/storage /app/bootstrap/cache
+
+# Create cache directory if not exists
+RUN mkdir -p /app/bootstrap/cache
 
 # Cache Laravel config untuk production
 RUN php artisan config:cache \
