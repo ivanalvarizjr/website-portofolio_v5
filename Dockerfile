@@ -1,37 +1,35 @@
-FROM php:8.2-fpm-alpine
+FROM webdevops/php-nginx:8.2-alpine
 
-# Install dependencies
-RUN apk add --no-cache \
-    zip unzip curl git libzip-dev \
-    libpng-dev libjpeg-turbo-dev freetype-dev \
-    oniguruma-dev bash
+# Set workdir
+WORKDIR /app
 
-# Install PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql mbstring zip gd
-
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Set working directory
-WORKDIR /var/www
-
-# Copy app files
+# Copy Laravel project
 COPY . .
 
-# Install PHP dependencies
+# Install system dependencies
+RUN apk add --no-cache \
+    bash zip unzip curl libzip-dev oniguruma-dev \
+    libpng-dev libjpeg-turbo-dev freetype-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_mysql mbstring zip gd
+
+# Install composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Set correct permissions
-RUN chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
+# Generate app key
+RUN php artisan key:generate --ansi || true
 
 # Laravel cache
-RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache \
-    && php artisan key:generate --ansi || true
+RUN php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache
 
-EXPOSE 9000
+# Set permissions
+RUN chown -R application:application storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
-CMD ["php-fpm"]
+# Expose Railway-compatible port
+EXPOSE 8080
