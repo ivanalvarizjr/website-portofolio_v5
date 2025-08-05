@@ -1,35 +1,35 @@
+# Gunakan image siap pakai yang sudah include PHP-FPM + NGINX
 FROM webdevops/php-nginx:8.2-alpine
 
-# Set workdir
+# Set direktori kerja
 WORKDIR /app
 
-# Copy Laravel project
+# Copy semua file project Laravel ke container
 COPY . .
 
-# Install system dependencies
+# Install dependency sistem & ekstensi PHP yang dibutuhkan Laravel
 RUN apk add --no-cache \
-    bash zip unzip curl libzip-dev oniguruma-dev \
+    zip unzip curl git libzip-dev \
     libpng-dev libjpeg-turbo-dev freetype-dev \
+    oniguruma-dev bash \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_mysql mbstring zip gd
 
-# Install composer
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Install dependencies
+# Install dependency Laravel (non-dev, optimize)
 RUN composer install --no-dev --optimize-autoloader
 
-# Generate app key
-RUN php artisan key:generate --ansi || true
+# Generate app key dan cache konfigurasi Laravel
+RUN php artisan key:generate --ansi || true \
+    && php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache
 
-# Laravel cache
-RUN php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
-
-# Set permissions
+# Set permission storage & cache
 RUN chown -R application:application storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-# Expose Railway-compatible port
+# Railway hanya expose port 8080
 EXPOSE 8080
