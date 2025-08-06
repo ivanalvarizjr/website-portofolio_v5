@@ -74,9 +74,7 @@
                     Mengubah Ide Menjadi Solusi Digital
                 </h2>
                 <p class="section-description">
-                    Dengan pendekatan yang sistematis dan perhatian terhadap detail, saya mengembangkan 
-                    aplikasi web dan mobile yang tidak hanya memenuhi kebutuhan bisnis, tetapi juga 
-                    memberikan pengalaman yang intuitif bagi pengguna.
+                    Dengan pendekatan yang sistematis dan perhatian terhadap detail, saya mengembangkan aplikasi web dan mobile yang tidak hanya memenuhi kebutuhan bisnis, tetapi juga memberikan pengalaman yang intuitif bagi pengguna. Selain itu, saya menerapkan prinsip UI/UX design modern guna memastikan antarmuka yang estetis, fungsional, dan mudah digunakan. Kombinasi ini memberikan nilai tambah yang signifikan bagi pengguna maupun pemilik bisnis.
                 </p>
                 
                 <div class="expertise-tags">
