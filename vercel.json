@@ -16,7 +16,6 @@
             "dest": "/api/index.php"
         }
     ],
-    "framework": "laravel",
     "env": {
         "APP_ENV": "production",
         "APP_DEBUG": "false",
