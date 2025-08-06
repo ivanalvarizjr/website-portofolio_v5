@@ -1,30 +1,15 @@
 {
     "version": 2,
-    "framework": null,
-    "functions": {
-
-            "api/index.php": { "runtime": "vercel-php@0.6.0"}
-    },
-    "routes": [
-        
-            {"src": "*/build/(.*)", "dest": "*public/build/*"},
-            {"src": "/(.*)", "dest": "api/index.php"}
-        
+    "builds": [
+        {
+            "src": "api/index.php",
+            "use": "vercel-php@0.6.0"
+        }
     ],
-    "public": true,
-    "buildCommand": "vite build",
-    "outputDirectory": "public",
-    "env": {
-        "APP_NAME": "Portofolio",
-        "APP_ENV": "production",
-        "APP_KEY": "base64:NAmRiDyWDSqWIsPeOM4R/G3sWJZVrKvJZtopHZgNhbE=",
-        "APP_DEBUG": "false",
-        "APP_URL": "https://ivanvrz.vercel.app",
-        "LOG_CHANNEL": "stack",
-        "LOG_LEVEL": "error",
-        "CACHE_DRIVER": "file",
-        "QUEUE_CONNECTION": "sync",
-        "SESSION_DRIVER": "file",
-        "SESSION_LIFETIME": "120"
-    }
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "api/index.php"
+        }
+    ]
 }
