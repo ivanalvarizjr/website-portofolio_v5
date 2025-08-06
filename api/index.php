@@ -13,5 +13,3 @@ $response = $kernel->handle($request);
 $response->send();
 
 $kernel->terminate($request, $response);
-
-file_put_contents('/tmp/debug.log', 'Laravel started: ' . date('Y-m-d H:i:s') . PHP_EOL, FILE_APPEND);
