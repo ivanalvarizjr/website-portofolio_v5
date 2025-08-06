@@ -33,7 +33,7 @@
                     </div>
                     <div class="contact-item">
                         <span class="contact-icon">📱</span>
-                        <a href="tel:+6281213039997" class="footer-link">+62 812-1303-9997</a>
+                        <a href="https://wa.me/6281213039997" target="_blank">whatsapp me!</a>
                     </div>
                     <div class="contact-item">
                         <span class="contact-icon">📍</span>
