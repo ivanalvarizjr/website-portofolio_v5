@@ -16,6 +16,7 @@
             "dest": "/api/index.php"
         }
     ],
+    "buildCommand": "chmod -R 775 bootstrap/cache storage || true",
     "env": {
         "APP_ENV": "production",
         "APP_DEBUG": "false",
