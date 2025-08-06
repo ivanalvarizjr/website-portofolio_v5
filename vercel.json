@@ -15,7 +15,7 @@
         "APP_ENV": "production",
         "APP_DEBUG": "false",
         "APP_KEY": "base64:NAmRiDyWDSqWIsPeOM4R/G3sWJZVrKvJZtopHZgNhbE=",
-        "DB_CONNECTION": null,
+        "DB_CONNECTION": "null",
         "CACHE_DRIVER": "array",
         "SESSION_DRIVER": "cookie",
         "LOG_CHANNEL": "stderr",
