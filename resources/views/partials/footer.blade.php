@@ -71,11 +71,6 @@
                 <p class="copyright">
                     &copy; {{ date('Y') }} Ivan Vrz f. All rights reserved.
                 </p>
-                <div class="footer-bottom-links">
-                    <a href="#" class="footer-bottom-link">Privacy Policy</a>
-                    <span class="separator">•</span>
-                    <a href="#" class="footer-bottom-link">Terms of Service</a>
-                </div>
             </div>
         </div>
     </div>
