@@ -11,18 +11,6 @@
                     untuk menghadirkan pengalaman terbaik bagi pengguna.
                 </p>
             </div>
-            
-            <!-- Quick Links -->
-            <div class="footer-section">
-                <h4 class="footer-section-title">Navigasi</h4>
-                <ul class="footer-links">
-                    <li><a href="{{ route('home') }}" class="footer-link">Beranda</a></li>
-                    <li><a href="{{ route('about') }}" class="footer-link">Tentang Saya</a></li>
-                    <li><a href="{{ route('projek') }}" class="footer-link">Project</a></li>
-                    <li><a href="{{ route('contact') }}" class="footer-link">Kontak</a></li>
-                </ul>
-            </div>
-            
             <!-- Contact Info -->
             <div class="footer-section">
                 <h4 class="footer-section-title">Kontak</h4>
