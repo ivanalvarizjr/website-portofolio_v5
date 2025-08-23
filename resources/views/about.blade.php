@@ -238,7 +238,7 @@
                                 <h4 class="timeline-position">S1 Sistem Informasi</h4>
                                 <p class="timeline-company">Universitas Indonesia</p>
                                 <p class="timeline-description">
-                                    IPK: 3.82 - Fokus pada Software Engineering, Web Development, dan UI/UX Design
+                                    IPK: 3.76 - Fokus pada Software Engineering, Web Development, dan UI/UX Design
                                 </p>
                             </div>
                         </div>
